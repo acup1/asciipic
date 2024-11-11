@@ -2,6 +2,7 @@ import pygame
 import threading
 import sys
 import time
+from random import randint
 
 class PgDisp:
     def __init__(self, name):
@@ -12,43 +13,45 @@ class PgDisp:
         pygame.init()
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption(self.name)
-
-        # Запускаем метод `loop` в отдельном потоке
-        self.thread = threading.Thread(target=self.loop, daemon=True)
-        self.thread.start()
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 36)
+        self.sym_size = self.font.size("#")
+        #self.thread = threading.Thread(target=self.loop, daemon=True)
+        #self.thread.start()
 
     def loop(self):
-        # Цикл обновления экрана и рисования
         while self.running:
-            # Заливка экрана чёрным цветом
-            self.screen.fill((0, 0, 0))
-            
-            # Обновление экрана
-            pygame.display.flip()
-            
-            # Ограничение на 60 FPS
-            time.sleep(1 / 60)
-
-        # Завершение Pygame, когда основной цикл окончен
+            try:
+                self.screen.fill((randint(0,255), 0, 0))
+                self.setstr('center',0,0)
+                
+                pygame.display.flip()            
+                time.sleep(1 / 60)
+            except:pass
         pygame.quit()
+    
+    def setstr(self,text:str,x:int|float,y:int|float):
+        temp=self.font.render(text,True, (255,255,255))
+        self.screen.blit(temp, dest=(x,y))
 
     def handle_events(self):
-        # Обработка событий, выполняемая в главном потоке
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.VIDEORESIZE:
                 self.WIDTH, self.HEIGHT = event.w, event.h
-                self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+                self.screen.fill((0,0,0))
+                for y in range(0,self.HEIGHT,self.sym_size[1]):
+                    for x in range(0,self.WIDTH,self.sym_size[0]):
+                        app.setstr(f"#",x,y)
+                #self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+        pygame.display.flip()
 
-# Создание экземпляра PgDisp
-app = PgDisp("Растягиваемый чёрный экран")
+app = PgDisp("test")
 
-# Основной поток ждёт завершения игрового окна
 try:
     while app.running:
         app.handle_events()
-        time.sleep(0.01)
+        time.sleep(.001)
 except KeyboardInterrupt:
     app.running = False
     app.thread.join()

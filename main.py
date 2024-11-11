@@ -23,7 +23,7 @@ def do_img(size:tuple[int] = ()) -> None:
     height,width,_=data.shape
     char_data=np.zeros((height,width),dtype=str)
     symbols='$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~i!lI;:,\"^`". '[::-1]
-    symbols='йху'[::-1]
+    #symbols='йху'[::-1]
 
     #17*9
     for y in range(height):
