@@ -12,6 +12,7 @@ class PgDisp:
         
         pygame.init()
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+        pygame.display.set_icon(pygame.image.load('logo.png'))
         pygame.display.set_caption(self.name)
         #self.font = pygame.font.Font(pygame.font.get_default_font(), font_size)
         self.font = pygame.font.Font("consola.ttf", font_size)
@@ -25,12 +26,12 @@ class PgDisp:
         "size of text grid in format (height,width)"
         return (self.HEIGHT//self.sym_size[1],self.WIDTH//self.sym_size[0])
 
-    def set_text(self,text:str,x:int|float,y:int|float, color:tuple[int]=(255,255,255), bg_color:tuple[int]=(0,0,0)):
+    def set_text(self,text:str,x:float,y:float, color:tuple[int]=(255,255,255), bg_color:tuple[int]=(0,0,0)):
         "just setting the text"
         temp=self.font.render(text,True, color,bg_color)
         self.screen.blit(temp, dest=(x,y))
 
-    def set_aligned_text(self,text:str,x:int|float,y:int|float, color:tuple[int]=(255,255,255), bg_color:tuple[int]=(0,0,0)):
+    def set_aligned_text(self,text:str,x:int,y:int, color:tuple[int]=(255,255,255), bg_color:tuple[int]=(0,0,0)):
         "set text on a grid"
         self.set_text(text,
                       x*self.sym_size[0]+(self.WIDTH%self.sym_size[0])//2,

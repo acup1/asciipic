@@ -8,7 +8,7 @@ import os
 
 
 def do_img(size:tuple[int] = ()) -> None:
-    global img,char_data, old_size, current_frame, cached_data
+    global img,char_data, old_size, current_frame, cached_data, symbols
     now=current_frame
     try:
         if cached_data[now].shape[:2]==old_size[now]:
@@ -36,7 +36,6 @@ def do_img(size:tuple[int] = ()) -> None:
     data = np.array(temp)
     height,width,_=data.shape
     char_data=np.zeros((height,width),dtype=str)
-    symbols='$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~i!lI;:,\"^`". '[::-1]
     #symbols='йху'[::-1]
 
     #17*9
@@ -105,8 +104,13 @@ def img_changer():
 
 if __name__=="__main__":
     #img=Image.open(sys.argv[1]).convert("RGBA")
-    
-    seq = Image.open(sys.argv[1])
+    symbols='$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~i!lI;:,\"^`". '[::-1]
+    if len(sys.argv)>1:
+        fname=sys.argv[1]
+    else:
+        fname="gif.gif"
+
+    seq = Image.open(fname)
     frame_duration = seq.info['duration']/1000
     seq = list(i.convert("RGBA") for i in ImageSequence.Iterator(seq))
     img=seq[0]
