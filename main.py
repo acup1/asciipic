@@ -1,5 +1,4 @@
 import threading
-import msvcrt
 import time
 from PIL import Image,ImageSequence
 import numpy as np
@@ -7,14 +6,6 @@ import sys
 import os
 import curses
 
-key=b''
-def control():
-    global key
-    while threading.main_thread().is_alive():
-        key=msvcrt.getch()
-        
-
-threading.Thread(target=control, args=(), daemon=True, name="control").start
 
 
 def do_img(size:tuple[int] = ()) -> None:
