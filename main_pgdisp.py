@@ -6,8 +6,24 @@ from pygamedisplay import PgDisp
 import sys
 import os
 
+
 def do_img(size:tuple[int] = ()) -> None:
-    global img,char_data
+    global img,char_data, old_size, current_frame, cached_data
+    now=current_frame
+    try:
+        if cached_data[now].shape[:2]==old_size[now]:
+            if abs(size[0]-old_size[now][0])<3 or abs(size[1]-old_size[now][1])<3:
+                char_data=cached_data[now]
+                return None
+            else:
+                print(now)
+                print(cached_data[now].shape[:2], size)
+        else:
+            print(cached_data[now].shape[:2], size)
+        
+    except Exception as e:
+        print(e)
+        print(now)
     temp=img.copy()
     w, h = temp.size
     temp=temp.resize((int(w*17/9), h))
@@ -31,7 +47,8 @@ def do_img(size:tuple[int] = ()) -> None:
             #char_data[y,x]='\N{ESC}[38;2;255;0;0m'+symbols[max(0,round(len(symbols)*grey)-1)]+'\u001b[0m'
             #char_data[y,x]='\N{ESC}[38;2;255;0;0m'+'1'+'\u001b[0m'
             #char_data[y,x]='1'
-
+    cached_data[now]=char_data
+    old_size[now]=char_data.shape[:2]
 
 
 
@@ -62,42 +79,42 @@ def main(app: PgDisp):
         screen=paste(screen,char_data)
         app.clear()
         for y in range(hw()[0]):
-            for x in range(hw()[1]):
-                app.set_aligned_text(screen[y,x],x,y)
+            app.set_aligned_text(''.join(screen[y,::]),0,y)
+            #for x in range(hw()[1]):
             
-        
-    def drawing_loop():
-        while 1:
-            try:
-                draw()
-                app.handle_events()
-                time.sleep(.001)
-            except:pass
+    
 
     #threading.Thread(target=drawing_loop, daemon=True, name="drawer", args=()).start()
     while app.running:
         try:
-            drawing_loop()
+            draw()
+            app.handle_events()
+            time.sleep(.001)
         except:
             pass
 
 def img_changer():
-    global seq, img
-    i=1
+    global seq, img, current_frame,frame_duration
+    current_frame=1
     while threading.main_thread().is_alive():
-        if i>len(seq)-1:
-            i=0
-        img=seq[i]
-        i+=1
-        time.sleep(.1)
+        if current_frame>=len(seq)-1:
+            current_frame=0
+        img=seq[current_frame]
+        current_frame+=1
+        time.sleep(frame_duration)
 
 if __name__=="__main__":
     #img=Image.open(sys.argv[1]).convert("RGBA")
+    
     seq = Image.open(sys.argv[1])
+    frame_duration = seq.info['duration']/1000
     seq = list(i.convert("RGBA") for i in ImageSequence.Iterator(seq))
     img=seq[0]
     threading.Thread(target=img_changer,args=(),daemon=True,name="ichange").start()
     char_data=None
+    old_size=[0]*len(seq)
+    current_frame=1
+    cached_data=[0]*len(seq)
 
     app=PgDisp("screen",10)
     main(app)

@@ -1,12 +1,14 @@
-import numpy as np
+from PIL import Image
 
-a=np.array([["1"]*2]*3)
-b=np.zeros((5,7),dtype=str)
-print(b)
-sy=b.shape[0]//2-a.shape[0]//2
-sx=b.shape[1]//2-a.shape[1]//2
-ey=b.shape[0]//2+a.shape[0]//2+a.shape[0]%2
-ex=b.shape[1]//2+a.shape[1]//2+a.shape[1]%2
-b[sy:ey,sx:ex]=a
-return b
-print(b)
+# Открываем GIF-файл
+with Image.open("g8.gif") as gif:
+    # Проверяем, что файл - анимация
+    if gif.is_animated:
+        # Получаем длительность одного кадра в миллисекундах
+        duration = gif.info['duration']
+        
+        # Рассчитываем FPS (частоту кадров)
+        fps = 1000 / duration
+        print(f"Частота кадров (FPS): {fps}")
+    else:
+        print("Этот GIF не является анимацией.")

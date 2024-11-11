@@ -13,21 +13,13 @@ class PgDisp:
         pygame.init()
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption(self.name)
-        self.font = pygame.font.Font(pygame.font.get_default_font(), font_size)
+        #self.font = pygame.font.Font(pygame.font.get_default_font(), font_size)
+        self.font = pygame.font.Font("consola.ttf", font_size)
+        #print(pygame.font.get_default_font())
         self.sym_size = self.font.size("#")
         #self.thread = threading.Thread(target=self.loop, daemon=True)
         #self.thread.start()
 
-    def loop(self):
-        while self.running:
-            try:
-                self.screen.fill((randint(0,255), 0, 0))
-                self.set_text('center',0,0)
-                
-                pygame.display.flip()            
-                time.sleep(1 / 60)
-            except:pass
-        pygame.quit()
     
     def size(self) -> tuple[int,int]:
         "size of text grid in format (height,width)"
