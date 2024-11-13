@@ -74,7 +74,7 @@ class PgDisp:
             elif event.type == pygame.WINDOWRESTORED:
                 self.is_minimized=False
             else:
-                print(event.type)
+                pass#print(event.type)
             
             #elif event.type == pygame.WINDOWMINIMIZED:
                 
