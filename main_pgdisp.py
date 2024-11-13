@@ -87,7 +87,7 @@ def main(app: PgDisp):
     #threading.Thread(target=drawing_loop, daemon=True, name="drawer", args=()).start()
     while app.running:
         try:
-            if not(app.is_minimized) and app.is_active:
+            if not(app.is_minimized):
                 draw()
             app.handle_events()
             #time.sleep(.001)
@@ -110,8 +110,8 @@ if __name__=="__main__":
             config=json.loads(open("config.json","r").read())
         except:
             config={
-                "fname":"gif.gif",
-                "font_size":15,
+                "fname":"g8.gif",
+                "font_size":10,
                 "speed": 1,
             }
         #img=Image.open(sys.argv[1]).convert("RGBA")
