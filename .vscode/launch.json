@@ -19,6 +19,6 @@
             "program": "main_pgdisp.py",
             "console": "integratedTerminal",
             "args": ["g7.gif"]
-        }
+        },
     ]
 }

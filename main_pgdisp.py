@@ -5,6 +5,7 @@ import numpy as np
 from pygamedisplay import PgDisp
 import sys
 import os
+import json
 
 
 def do_img(size:tuple[int] = ()) -> None:
@@ -15,15 +16,15 @@ def do_img(size:tuple[int] = ()) -> None:
             if abs(size[0]-old_size[now][0])<3 or abs(size[1]-old_size[now][1])<3:
                 char_data=cached_data[now]
                 return None
-            else:
-                print(now)
-                print(cached_data[now].shape[:2], size)
-        else:
-            print(cached_data[now].shape[:2], size)
+            else:pass
+                #print(now)
+                #print(cached_data[now].shape[:2], size)
+        else:pass
+            #print(cached_data[now].shape[:2], size)
         
-    except Exception as e:
-        print(e)
-        print(now)
+    except Exception as e:pass
+        #print(e)
+        #print(now)
     temp=img.copy()
     w, h = temp.size
     temp=temp.resize((int(w*17/9), h))
@@ -86,11 +87,12 @@ def main(app: PgDisp):
     #threading.Thread(target=drawing_loop, daemon=True, name="drawer", args=()).start()
     while app.running:
         try:
-            draw()
+            if not(app.is_minimized) and app.is_active:
+                draw()
             app.handle_events()
-            time.sleep(.001)
-        except:
-            pass
+            #time.sleep(.001)
+        except Exception as e:pass
+            #print(e)
 
 def img_changer():
     global seq, img, current_frame,frame_duration
@@ -103,22 +105,35 @@ def img_changer():
         time.sleep(frame_duration)
 
 if __name__=="__main__":
-    #img=Image.open(sys.argv[1]).convert("RGBA")
-    symbols='$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~i!lI;:,\"^`". '[::-1]
-    if len(sys.argv)>1:
-        fname=sys.argv[1]
-    else:
-        fname="gif.gif"
+    try:
+        try:
+            config=json.loads(open("config.json","r").read())
+        except:
+            config={
+                "fname":"gif.gif",
+                "font_size":15,
+                "speed": 1,
+            }
+        #img=Image.open(sys.argv[1]).convert("RGBA")
+        symbols=' ."`^",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'
+        #if len(sys.argv)>1:
+        #    fname=sys.argv[1]
+        #else:
+        #    fname="gif.gif"
 
-    seq = Image.open(fname)
-    frame_duration = seq.info['duration']/1000
-    seq = list(i.convert("RGBA") for i in ImageSequence.Iterator(seq))
-    img=seq[0]
-    threading.Thread(target=img_changer,args=(),daemon=True,name="ichange").start()
-    char_data=None
-    old_size=[0]*len(seq)
-    current_frame=1
-    cached_data=[0]*len(seq)
+        fname=config["fname"]
+        seq = Image.open(fname)
+        frame_duration = seq.info['duration']/1000*config["speed"]
+        seq = list(i.convert("RGBA") for i in ImageSequence.Iterator(seq))
+        img=seq[0]
+        threading.Thread(target=img_changer,args=(),daemon=True,name="ichange").start()
+        char_data=None
+        old_size=[0]*len(seq)
+        current_frame=1
+        cached_data=[0]*len(seq)
 
-    app=PgDisp("screen",10)
-    main(app)
+        app=PgDisp("screen",config["font_size"])
+        main(app)
+    except Exception as e:
+        with open("err.log","wa") as f:
+            f.write(str(e))

@@ -9,8 +9,11 @@ class PgDisp:
         self.name = name
         self.WIDTH, self.HEIGHT = 800, 600
         self.running = True
-        
+        self.is_active = False
+        self.is_minimized = False
+        self.minimized_time = 0
         pygame.init()
+        self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         pygame.display.set_icon(pygame.image.load('logo.png'))
         pygame.display.set_caption(self.name)
@@ -57,7 +60,26 @@ class PgDisp:
                 sys.exit()
             elif event.type == pygame.VIDEORESIZE:
                 self.WIDTH, self.HEIGHT = event.w, event.h
+            elif event.type == pygame.ACTIVEEVENT:
+                if event.gain == 0:  # Если gain = 0, окно потеряло активность
+                    self.is_active = False
+                else:
+                    self.is_active = True
+            elif event.type == pygame.WINDOWMINIMIZED:
+                self.is_minimized=True
+                print(1)
+                self.minimized_time=time.time()
+            elif event.type == pygame.WINDOWMAXIMIZED:
+                self.is_minimized=False
+            elif event.type == pygame.WINDOWRESTORED:
+                self.is_minimized=False
+            else:
+                print(event.type)
+            
+            #elif event.type == pygame.WINDOWMINIMIZED:
+                
         pygame.display.flip()
+        self.clock.tick(60)
 
 if __name__=="__main__":
     app = PgDisp("test")
