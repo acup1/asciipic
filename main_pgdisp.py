@@ -9,7 +9,7 @@ import json
 
 
 def do_img(size:tuple[int] = ()) -> None:
-    global img,char_data, old_size, current_frame, cached_data, symbols
+    global img,char_data, old_size, current_frame, cached_data, symbols,app
     now=current_frame
     try:
         if cached_data[now].shape[:2]==old_size[now]:
@@ -27,7 +27,7 @@ def do_img(size:tuple[int] = ()) -> None:
         #print(now)
     temp=img.copy()
     w, h = temp.size
-    temp=temp.resize((int(w*17/9), h))
+    temp=temp.resize((int(w*app.sym_size[1]/app.sym_size[0]), h))
     w, h = temp.size
     if len(size)==0:size=(w,h)
     #else: size=(min(size),min(size))
@@ -111,7 +111,7 @@ if __name__=="__main__":
         except:
             config={
                 "fname":"g8.gif",
-                "font_size":10,
+                "font_size":15,
                 "speed": 1,
             }
         #img=Image.open(sys.argv[1]).convert("RGBA")
@@ -123,7 +123,7 @@ if __name__=="__main__":
 
         fname=config["fname"]
         seq = Image.open(fname)
-        frame_duration = seq.info['duration']/1000*config["speed"]
+        frame_duration = seq.info['duration']/1000/config["speed"]
         seq = list(i.convert("RGBA") for i in ImageSequence.Iterator(seq))
         img=seq[0]
         threading.Thread(target=img_changer,args=(),daemon=True,name="ichange").start()
